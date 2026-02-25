@@ -1,14 +1,18 @@
 function Navbar() {
   return (
-    <div className="bg-white shadow px-6 py-4 flex justify-between items-center">
-      <h2 className="text-lg font-semibold">Employee Management System</h2>
-
+    <div className="flex items-center justify-between px-6 py-4 bg-[#0F172A] border-b border-gray-800">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 bg-blue-600 rounded-full text-white flex items-center justify-center">
-          A
+        <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-2 rounded-lg">
+          <span className="font-bold">👥</span>
         </div>
-        <span className="font-medium">Admin</span>
+        <h1 className="text-lg font-semibold">
+          EmpTrack <span className="text-gray-400 text-sm">Management</span>
+        </h1>
       </div>
+
+      <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-medium">
+        + Add Employee
+      </button>
     </div>
   );
 }
