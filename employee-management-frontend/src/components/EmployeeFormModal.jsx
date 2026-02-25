@@ -1,156 +1,50 @@
 import { useState, useEffect } from "react";
-import API from "../services/api";
 
-function EmployeeFormModal({ employee, close, refresh }) {
-  const [formData, setFormData] = useState({
+function EmployeeFormModal({ employee, onClose, onSave }) {
+  const [form, setForm] = useState({
     name: "",
     email: "",
+    department: "",
     position: "",
     salary: "",
+    status: "Active",
   });
 
-  const [errors, setErrors] = useState({});
-
   useEffect(() => {
-    if (employee) {
-      setFormData(employee);
-    }
+    if (employee) setForm(employee);
   }, [employee]);
 
-  const validate = () => {
-    let newErrors = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = "Name is required";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (!formData.position.trim()) {
-      newErrors.position = "Position is required";
-    }
-
-    if (!formData.salary || formData.salary <= 0) {
-      newErrors.salary = "Salary must be greater than 0";
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = e => {
     e.preventDefault();
-
-    if (!validate()) return;
-
-    try {
-      if (employee) {
-        await API.put(`/employees/${employee.id}`, formData);
-      } else {
-        await API.post("/employees", formData);
-      }
-
-      refresh();
-      close();
-    } catch (error) {
-      console.error(error);
-    }
+    onSave(form);
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center">
-      <div className="bg-white p-8 rounded-2xl shadow-xl w-96">
-        <h2 className="text-2xl font-semibold mb-6">
+    <div className="fixed inset-0 bg-black/60 flex justify-center items-center">
+      <div className="bg-[#111827] p-6 rounded-xl w-96 space-y-4">
+        <h2 className="text-lg font-semibold">
           {employee ? "Edit Employee" : "Add Employee"}
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
-          <div>
+        <form onSubmit={handleSubmit} className="space-y-3">
+          {["name", "email", "department", "position", "salary"].map(field => (
             <input
+              key={field}
               type="text"
-              name="name"
-              placeholder="Full Name"
-              value={formData.name}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder={field}
+              value={form[field]}
+              onChange={e => setForm({ ...form, [field]: e.target.value })}
+              className="w-full bg-[#1F2937] p-2 rounded"
+              required
             />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-            )}
-          </div>
+          ))}
 
-          {/* Email */}
-          <div>
-            <input
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.email && (
-              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-            )}
-          </div>
-
-          {/* Position */}
-          <div>
-            <input
-              type="text"
-              name="position"
-              placeholder="Position"
-              value={formData.position}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.position && (
-              <p className="text-red-500 text-sm mt-1">{errors.position}</p>
-            )}
-          </div>
-
-          {/* Salary */}
-          <div>
-            <input
-              type="number"
-              name="salary"
-              placeholder="Salary"
-              value={formData.salary}
-              onChange={handleChange}
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            {errors.salary && (
-              <p className="text-red-500 text-sm mt-1">{errors.salary}</p>
-            )}
-          </div>
-
-          {/* Buttons */}
-          <div className="flex justify-end gap-3 pt-4">
-            <button
-              type="button"
-              onClick={close}
-              className="px-4 py-2 rounded-lg bg-gray-400 text-white hover:bg-gray-500"
-            >
+          <div className="flex justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded">
               Cancel
             </button>
-
-            <button
-              type="submit"
-              className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
-            >
-              {employee ? "Update" : "Save"}
+            <button type="submit" className="px-4 py-2 bg-blue-600 rounded">
+              Save
             </button>
           </div>
         </form>
