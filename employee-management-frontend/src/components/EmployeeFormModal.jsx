@@ -11,11 +11,28 @@ function EmployeeFormModal({ employee, onClose, onSave }) {
   });
 
   useEffect(() => {
-    if (employee) setForm(employee);
+    if (employee) {
+      setForm(employee);
+    } else {
+      setForm({
+        name: "",
+        email: "",
+        department: "",
+        position: "",
+        salary: "",
+        status: "Active",
+      });
+    }
   }, [employee]);
 
-  const handleSubmit = e => {
+  const handleSubmit = (e) => {
     e.preventDefault();
+
+    if (!form.name || !form.email) {
+      alert("Please fill required fields");
+      return;
+    }
+
     onSave(form);
   };
 
@@ -27,23 +44,61 @@ function EmployeeFormModal({ employee, onClose, onSave }) {
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-3">
-          {["name", "email", "department", "position", "salary"].map(field => (
-            <input
-              key={field}
-              type="text"
-              placeholder={field}
-              value={form[field]}
-              onChange={e => setForm({ ...form, [field]: e.target.value })}
-              className="w-full bg-[#1F2937] p-2 rounded"
-              required
-            />
-          ))}
+          <input
+            type="text"
+            placeholder="Name"
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="w-full bg-[#1F2937] p-2 rounded"
+            required
+          />
+
+          <input
+            type="email"
+            placeholder="Email"
+            value={form.email}
+            onChange={(e) => setForm({ ...form, email: e.target.value })}
+            className="w-full bg-[#1F2937] p-2 rounded"
+            required
+          />
+
+          <input
+            type="text"
+            placeholder="Department"
+            value={form.department}
+            onChange={(e) => setForm({ ...form, department: e.target.value })}
+            className="w-full bg-[#1F2937] p-2 rounded"
+          />
+
+          <input
+            type="text"
+            placeholder="Position"
+            value={form.position}
+            onChange={(e) => setForm({ ...form, position: e.target.value })}
+            className="w-full bg-[#1F2937] p-2 rounded"
+          />
+
+          <input
+            type="number"
+            placeholder="Salary"
+            value={form.salary}
+            onChange={(e) => setForm({ ...form, salary: e.target.value })}
+            className="w-full bg-[#1F2937] p-2 rounded"
+          />
 
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={onClose} className="px-4 py-2 bg-gray-600 rounded">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 bg-gray-600 rounded"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-blue-600 rounded">
+
+            <button
+              type="submit"
+              className="px-4 py-2 bg-blue-600 rounded"
+            >
               Save
             </button>
           </div>
